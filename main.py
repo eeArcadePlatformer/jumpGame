@@ -48,10 +48,13 @@ class Player():
         self.speed_x = 2.5
         self.direction = 0 # right : 1, left : -1
         
+        self.width = self.image.get_width()
+        self.height = self.image.get_height()
+        
     def update(self):
         dx = 0
         dy = 0
-        walk_cooldown = 5
+        walk_cooldown = 2
         
         # get key press
         key = pg.key.get_pressed()
@@ -68,7 +71,7 @@ class Player():
             
         # jump
         if key[pg.K_SPACE] and self.jumped == False:
-            self.velocuty_y = -7.5
+            self.velocuty_y = -10
             self.jumped = True
         if key[pg.K_SPACE] == False:
             self.jumped = False
@@ -95,14 +98,22 @@ class Player():
         
         # gravity
         self.velocuty_y +=0.5
-        if self.velocuty_y >5:
-            self.velocuty_y = 5
+        if self.velocuty_y >3:
+            self.velocuty_y = 3
         
         dy += self.velocuty_y
         
         #check collision
-        # ...
-        
+        for tile in world.tile_list:
+            if tile[1].colliderect(self.rect.x + dx, self.rect.y, self.width, self.height):
+                dx = 0
+            if tile[1].colliderect(self.rect.x, self.rect.y+dy, self.width,self.height):
+                if self.velocuty_y < 0:
+                    dy = tile[1].bottom - self.rect.top
+                    self.velocuty_y = 0
+                elif self.velocuty_y >=0:
+                    dy = tile[1].top - self.rect.bottom
+                    self.velocuty_y = 0
         # update player x coordinate
         self.rect.x += dx
         self.rect.y += dy
@@ -113,6 +124,7 @@ class Player():
         
         # drawing
         screen.blit(self.image,self.rect)
+        pg.draw.rect(screen, (255,255,255), self.rect, 2) # for collision range rendering
 
 class World():
     def __init__(self, data):
@@ -143,6 +155,7 @@ class World():
     def draw(self):
         for tile in self.tile_list:
             screen.blit(tile[0], tile[1])
+            pg.draw.rect(screen, (255,255,255), tile[1], 2)
 
 world_data = [
 [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
@@ -173,10 +186,10 @@ world = World(world_data)
 run = True
 while run:
     screen.blit(bg_img, (0, 0)) # 배경 이미지 그리기
-    screen.blit(sun_img, (100, 100)) # 태양 이미지 그리기
+    screen.blit(sun_img, (50, 50)) # 태양 이미지 그리기
 
     # drawing, update
-    draw_grid()#그리드 그리기
+    # draw_grid()#그리드 그리기
     world.draw()
     player.update()
     
