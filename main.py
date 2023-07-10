@@ -1,6 +1,13 @@
 import pygame as pg
 from pygame.locals import *
 
+from classes.wolrd import World
+from classes.player import Player
+from classes.enemy import Enemy
+from classes.lava import Lava
+
+import utils
+
 pg.init()#pygame을 초기화
 
 screen_width = 500
@@ -16,146 +23,6 @@ tile_size = 25  # 타일의 크기 설정
 #이미지 로드
 sun_img = pg.image.load('img/sun.png')#태양 이미지
 bg_img = pg.image.load('img/sky.png')#배경 이미지
-
-def draw_grid():
-	#그리드 그리기 함수
-	for line in range(0, 20):
-		pg.draw.line(screen, (255, 255, 255), (0, line * tile_size), (screen_width, line * tile_size))
-		pg.draw.line(screen, (255, 255, 255), (line * tile_size, 0), (line * tile_size, screen_height))
-
-class Player():
-    def __init__(self,x,y):
-        # 애니메이션을 위한 이미지 목록
-        self.images_right = []
-        self.images_left = []
-        self.index = 0 # animation index
-        self.counter = 0
-        for num in range(1, 5):
-            img_right = pg.image.load(f'img/guy{num}.png')
-            img_right = pg.transform.scale(img_right, (20, 40))
-            img_left = pg.transform.flip(img_right, True, False)
-            self.images_right.append(img_right)
-            self.images_left.append(img_left)
-        
-        # images_right의 idx번째 transform
-        self.image = self.images_right[self.index]
-        
-        self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
-        self.velocuty_y = 0
-        self.jumped = False
-        self.speed_x = 2.5
-        self.direction = 0 # right : 1, left : -1
-        
-        self.width = self.image.get_width()
-        self.height = self.image.get_height()
-        
-    def update(self):
-        dx = 0
-        dy = 0
-        walk_cooldown = 2
-        
-        # get key press
-        key = pg.key.get_pressed()
-        
-        # horizontal move
-        if key[pg.K_LEFT]:
-            dx -=self.speed_x
-            self.counter += 1
-            self.direction =-1
-        if key[pg.K_RIGHT]:
-            dx += self.speed_x
-            self.counter += 1
-            self.direction =1
-            
-        # jump
-        if key[pg.K_SPACE] and self.jumped == False:
-            self.velocuty_y = -10
-            self.jumped = True
-        if key[pg.K_SPACE] == False:
-            self.jumped = False
-            
-        if key[pg.K_LEFT] == False and key[pg.K_RIGHT] == False:
-            self.counter = 0
-            self.index = 0
-            if self.direction == 1:
-                self.image = self.images_right[self.index]
-            if self.direction == -1:
-                self.image = self.images_left[self.index]
-        
-        # handle animation
-        if self.counter > walk_cooldown:
-            self.counter = 0	
-            self.index += 1
-            if self.index >= len(self.images_right):
-                self.index = 0
-            if self.direction == 1:
-                self.image = self.images_right[self.index]
-            if self.direction == -1:
-                self.image = self.images_left[self.index]
-        
-        
-        # gravity
-        self.velocuty_y +=0.5
-        if self.velocuty_y >3:
-            self.velocuty_y = 3
-        
-        dy += self.velocuty_y
-        
-        #check collision
-        for tile in world.tile_list:
-            if tile[1].colliderect(self.rect.x + dx, self.rect.y, self.width, self.height):
-                dx = 0
-            if tile[1].colliderect(self.rect.x, self.rect.y+dy, self.width,self.height):
-                if self.velocuty_y < 0:
-                    dy = tile[1].bottom - self.rect.top
-                    self.velocuty_y = 0
-                elif self.velocuty_y >=0:
-                    dy = tile[1].top - self.rect.bottom
-                    self.velocuty_y = 0
-        # update player x coordinate
-        self.rect.x += dx
-        self.rect.y += dy
-
-        if self.rect.bottom > screen_height:
-            self.rect.bottom = screen_height
-            dy = 0
-        
-        # drawing
-        screen.blit(self.image,self.rect)
-        pg.draw.rect(screen, (255,255,255), self.rect, 2) # for collision range rendering
-
-class World():
-    def __init__(self, data):
-        dirt_img = pg.image.load('img/dirt.png') # 흙 (기본 이미지)
-        grass_img = pg.image.load('img/grass.png')
-
-        self.tile_list=[]
-        
-        for row_count, row in enumerate(data):# 세로로 각 행에 대해
-            for col_count, tile in enumerate(row):
-                if tile == 1:
-                    img = pg.transform.scale(dirt_img, (tile_size, tile_size))
-                    img_rect = img.get_rect()
-                    img_rect.x = col_count * tile_size # 열 개수 * 타일사이즈 => 즉, 타일 개수만큼 이동
-                    img_rect.y = row_count * tile_size
-                    tile = (img, img_rect)
-                    
-                    self.tile_list.append(tile)
-                    
-                if tile == 2:
-                    img = pg.transform.scale(grass_img, (tile_size, tile_size))
-                    img_rect = img.get_rect()
-                    img_rect.x = col_count * tile_size
-                    img_rect.y = row_count * tile_size
-                    tile = (img, img_rect)
-                    self.tile_list.append(tile)
-    
-    def draw(self):
-        for tile in self.tile_list:
-            screen.blit(tile[0], tile[1])
-            pg.draw.rect(screen, (255,255,255), tile[1], 2)
 
 world_data = [
 [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
@@ -180,8 +47,8 @@ world_data = [
 [1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 ]
 
-player = Player(50,screen_height-65)
-world = World(world_data)
+player = Player(50,screen_height-65,screen)
+world = World(screen,world_data,tile_size)
 
 run = True
 while run:
@@ -190,8 +57,8 @@ while run:
 
     # drawing, update
     # draw_grid()#그리드 그리기
-    world.draw()
-    player.update()
+    world.draw()    
+    player.update(tile_list=world.tile_list, game_over=False)
     
     for event in pg.event.get():
 		#종료 이벤트 처리
