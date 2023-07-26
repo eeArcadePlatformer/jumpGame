@@ -1,6 +1,6 @@
 import pygame
 
-class Coin(pygame.sprite.Sprite):
+class Platform(pygame.sprite.Sprite):
     def __init__(self, tile_size, x, y, move_x, move_y):
         super().__init__()
         self.image = pygame.image.load('img/platform.png').convert_alpha()
