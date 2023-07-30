@@ -1,13 +1,21 @@
 import pygame as pg
 from pygame.locals import *
 
-from classes.wolrd import World
-from classes.player import Player
+from classes.gameObj.wolrd import World
+from classes.gameObj.player import Player
+from classes.gameObj.button import Button
+from classes.gameObj.enemy import Enemy
+from classes.gameObj.platform import Platform
+from classes.gameObj.lava import Lava
+from classes.gameObj.coin import Coin
+from classes.gameObj.ExitDoor import ExitDoor
+from classes.Managers.soundmanager import SoundManager
 
 from utils import *
 
 if __name__ == "__main__":
-    pg.init()#pygame을 초기화
+    if __name__ == "__main__":
+        pg.init()#pygame을 초기화
 
     screen_width = 500
     screen_height = 500
