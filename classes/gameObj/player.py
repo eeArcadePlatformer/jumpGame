@@ -6,7 +6,6 @@ class Player():
         self.reset(x, y, screen)
 
     def update(self, game_over, tile_list, groups):
-        screen_width, screen_height = pg.display.get_surface().get_size()
         dx = 0
         dy = 0
         walk_cooldown = 5
@@ -114,7 +113,7 @@ class Player():
 
         elif game_over == -1:
             self.image = self.dead_image
-            draw_text('GAME OVER!', self.font, (0, 0, 255), (screen_width // 2) - 200, screen_height // 2)
+            draw_text('GAME OVER!', self.font, (0, 0, 255), (self.screen_width // 2) - 200, self.screen_height // 2)
             if self.rect.y > 200:
                 self.rect.y -= 5
 
@@ -124,6 +123,8 @@ class Player():
 
     def reset(self, x, y, screen):
         self.screen = screen
+        screen_width, screen_height = pg.display.get_surface().get_size()
+        
         self.images_right = []
         self.images_left = []
         self.index = 0
