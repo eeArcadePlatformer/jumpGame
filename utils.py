@@ -1,7 +1,7 @@
 import pygame as pg
 import os
 import pickle
-from classes.wolrd import World
+from classes.gameObj.wolrd import World
 
 def draw_grid(screen, tile_size,screen_width, screen_height):
     #그리드 그리기 함수
