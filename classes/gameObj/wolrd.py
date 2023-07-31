@@ -45,10 +45,10 @@ class World():
                     blob = Enemy(col_count * tile_size, row_count * tile_size + 15)
                     self.blob_group.add(blob)
                 if tile == 4:
-                    platform = Platform(col_count * tile_size, row_count * tile_size, 1, 0)
+                    platform = Platform(tile_size, col_count * tile_size, row_count * tile_size,1,0)
                     self.platform_group.add(platform)
                 if tile == 5:
-                    platform = Platform(col_count * tile_size, row_count * tile_size, 0, 1)
+                    platform = Platform(tile_size, col_count * tile_size, row_count * tile_size,0,1)
                     self.platform_group.add(platform)
 
                 if tile == 6:
