@@ -3,12 +3,31 @@ from pygame.locals import *
 
 from classes.gameObj.wolrd import World
 from classes.gameObj.player import Player
+from classes.Managers.soundmanager import SoundManager
 
 from utils import *
 
 if __name__ == "__main__":
-    if __name__ == "__main__":
-        pg.init()#pygame을 초기화
+    pg.init()#pygame을 초기화
+    
+    sound_files = {
+        'music': 'img/music.wav',
+        'coin': 'img/coin.wav',
+        'jump': 'img/jump.wav',
+        'game_over': 'img/game_over.wav'
+    }
+
+    # SoundManager 인스턴스 생성
+    sound_manager = SoundManager(sound_files)
+
+    # 사운드 설정
+    sound_manager.sounds['coin'].set_volume(0.5)
+    sound_manager.sounds['jump'].set_volume(0.5)
+    sound_manager.sounds['game_over'].set_volume(0.5)
+
+    # 배경 음악 재생
+    pg.mixer.music.load('img/music.wav')
+    pg.mixer.music.play(-1, 0.0, 5000)
 
     screen_width = 500
     screen_height = 500
