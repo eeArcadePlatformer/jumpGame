@@ -1,9 +1,10 @@
 import pygame as pg
 from pygame.locals import *
-from classes.enemy import Enemy
-from classes.lava import Lava
-from classes.coin import Coin
-from classes.ExitDoor import ExitDoor
+from classes.gameObj.enemy import Enemy
+from classes.gameObj.lava import Lava
+from classes.gameObj.coin import Coin
+from classes.gameObj.ExitDoor import ExitDoor
+from classes.gameObj.platform import Platform
 class World():
     def __init__(self, screen, data, tile_size, groups):
         dirt_img = pg.image.load('img/dirt.png') # 흙 (기본 이미지)
@@ -17,6 +18,7 @@ class World():
         self.lava_group = groups["lava_group"]
         self.coin_group = groups["coin_group"]
         self.exit_group = groups["exit_group"]
+        self.platform_group = groups["platform_group"]
         
         self.screen = screen
         
@@ -42,6 +44,13 @@ class World():
                 if tile == 3:
                     blob = Enemy(col_count * tile_size, row_count * tile_size + 15)
                     self.blob_group.add(blob)
+                if tile == 4:
+                    platform = Platform(tile_size, col_count * tile_size, row_count * tile_size,1,0)
+                    self.platform_group.add(platform)
+                if tile == 5:
+                    platform = Platform(tile_size, col_count * tile_size, row_count * tile_size,0,1)
+                    self.platform_group.add(platform)
+
                 if tile == 6:
                     lava = Lava(x=col_count * tile_size, y=row_count * tile_size + (tile_size // 2),tile_size= tile_size)
                     self.lava_group.add(lava)

@@ -3,13 +3,6 @@ from pygame.locals import *
 
 from classes.gameObj.wolrd import World
 from classes.gameObj.player import Player
-from classes.gameObj.button import Button
-from classes.gameObj.enemy import Enemy
-from classes.gameObj.platform import Platform
-from classes.gameObj.lava import Lava
-from classes.gameObj.coin import Coin
-from classes.gameObj.ExitDoor import ExitDoor
-from classes.Managers.soundmanager import SoundManager
 
 from utils import *
 
@@ -29,12 +22,14 @@ if __name__ == "__main__":
     lava_group = pg.sprite.Group()
     coin_group = pg.sprite.Group()
     exit_group = pg.sprite.Group()
+    platform_group = pg.sprite.Group()
     
     sprite_groups = {
         "blob_group" : blob_group,
         "lava_group" : lava_group,
         "coin_group" : coin_group,
-        "exit_group" : exit_group
+        "exit_group" : exit_group,
+        "platform_group" : platform_group
     }
     
     #define game variables
@@ -78,7 +73,7 @@ if __name__ == "__main__":
         # drawing, update
         # draw_grid()#그리드 그리기
         world.draw()    
-        player.update(tile_list=world.tile_list, game_over=False)
+        player.update(tile_list=world.tile_list, game_over=False, groups=sprite_groups)
         
         for event in pg.event.get():
     		#종료 이벤트 처리
