@@ -113,7 +113,7 @@ class Player():
 
         elif game_over == -1:
             self.image = self.dead_image
-            draw_text('GAME OVER!', self.font, (0, 0, 255), (self.screen_width // 2) - 200, self.screen_height // 2)
+            draw_text(self.screen,'GAME OVER!', self.font, (0, 0, 255), (self.screen_width // 2) - 200, self.screen_height // 2)
             if self.rect.y > 200:
                 self.rect.y -= 5
 
@@ -123,7 +123,7 @@ class Player():
 
     def reset(self, x, y, screen):
         self.screen = screen
-        screen_width, screen_height = pg.display.get_surface().get_size()
+        self.screen_width, self.screen_height = pg.display.get_surface().get_size()
         
         self.images_right = []
         self.images_left = []

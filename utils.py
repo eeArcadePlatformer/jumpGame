@@ -16,24 +16,32 @@ def draw_text(screen ,text, font, text_col, x, y):
     screen.blit(img, (x, y))
 
 # 레벨 리셋 함수
-def reset_level(level, player, blob_group, lava_group, exit_group, platform_group, coin_group, tile_size):
+def reset_level(level, player, blob_group, lava_group, exit_group, platform_group, coin_group, tile_size, screen):
     screen_width, screen_height = pg.display.get_surface().get_size()
-    player.reset(100, screen_height - 130)
+    player.reset(100, screen_height - 130, screen)
     blob_group.empty()
     platform_group.empty()
     coin_group.empty()
     lava_group.empty()
     exit_group.empty()
     # level read
-    if os.path.exists(f'level{level}_data'):
-        pickle_in = open(f'level{level}_data', 'rb')
+    if os.path.exists(f'levels/level{level}_data'):
+        pickle_in = open(f'levels/level{level}_data', 'rb')
         world_data = pickle.load(pickle_in)
     else:
         print('Level is Empty. plz check.')
         exit()
-    world = World(world_data)
+        
+    sprite_groups = {
+        "blob_group" : blob_group,
+        "lava_group" : lava_group,
+        "coin_group" : coin_group,
+        "exit_group" : exit_group,
+        "platform_group" : platform_group
+    }
+    world = World(screen, world_data, tile_size, sprite_groups)
 
-    score_coin = Coin(tile_size // 2, tile_size // 2)
+    score_coin = Coin(tile_size // 2, tile_size // 2, tile_size)
     coin_group.add(score_coin)
 
     return world
