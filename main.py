@@ -57,7 +57,7 @@ if __name__ == "__main__":
     game_over = 0
     main_menu = True
     level = 0
-    max_levels = 7
+    max_levels = 4
     score = 0
 
     #이미지 로드
