@@ -25,15 +25,17 @@ class ScoreManager():
         return level * 10 + coins_collected
     
     def save_score(self, username, score):
-        self.scores = pickle.load(self.save_path)
-        self.score.append((username, score))
-        
+        with open(self.save_path, 'rb') as file:
+            self.scores = pickle.load(file)
+    
+        self.scores.append((username, score))
+
         self.scores.sort(key=lambda x: x[1], reverse=True)
         self.scores.pop()
-        if not os.path.isfile(self.save_path):
-            with open(self.save_path, 'wb') as file:
-                pickle.dump(self.scores, file)
-    
+
+        with open(self.save_path, 'wb') as file:
+            pickle.dump(self.scores, file)
+
     def load_high_scores(self):
         self.scores = pickle.load(self.save_path) 
         return self.scores

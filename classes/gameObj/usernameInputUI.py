@@ -21,11 +21,8 @@ class UsernameInputUI:
     def get_input(self):
         return self.input_string
 
-    def handle_events(self):
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                exit()
+    def handle_events(self, events):
+        for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
                     # 엔터 키를 누르면 입력값 반환

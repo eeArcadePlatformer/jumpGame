@@ -4,7 +4,9 @@ from pygame.locals import *
 from classes.gameObj.wolrd import World
 from classes.gameObj.player import Player
 from classes.Managers.soundmanager import SoundManager
+from classes.Managers.scoremanager import ScoreManager
 from classes.gameObj.button import Button
+from classes.gameObj.usernameInputUI import UsernameInputUI
 
 from utils import *
 
@@ -18,8 +20,9 @@ if __name__ == "__main__":
         'game_over': 'sound/game_over.wav'
     }
 
-    # SoundManager 인스턴스 생성
+    # manager class
     sound_manager = SoundManager(sound_files)
+    score_manager = ScoreManager()
 
     # 사운드 설정
     sound_manager.sounds['coin'].set_volume(0.5)
@@ -57,7 +60,7 @@ if __name__ == "__main__":
     game_over = 0
     main_menu = True
     level = 0
-    max_levels = 4
+    max_levels = 2
     score = 0
 
     #이미지 로드
@@ -87,6 +90,10 @@ if __name__ == "__main__":
     font_score = pg.font.SysFont('Bauhaus 93', 30)
     white = (255, 255, 255)
     blue = (0, 0, 255)
+    
+    # UI class
+    input_active = False
+    username_input_ui = UsernameInputUI(screen, font)
 
     player = Player(50,screen_height-65,screen)
     
@@ -146,6 +153,10 @@ if __name__ == "__main__":
                     game_over = 0
                 else:
                     draw_text(screen,'YOU WIN!', font, blue, (screen_width // 2) - 140, screen_height // 2)
+                    # Save the score using ScoreManager
+                    final_score = score_manager.calculate_score(level, score)
+                    input_active = True
+                    
                     if restart_button.draw():
                         level = 1
                         # reset level
@@ -154,9 +165,14 @@ if __name__ == "__main__":
                         game_over = 0
                         score = 0
 
-        for event in pg.event.get():
+        events = pg.event.get()
+        for event in events:
             if event.type == pg.QUIT:
                 run = False
+                
+        if input_active:
+            username_input_ui.handle_events(events)
+            username_input_ui.draw()
 
         pg.display.update()
 
