@@ -7,6 +7,7 @@ from classes.Managers.soundmanager import SoundManager
 from classes.Managers.scoremanager import ScoreManager
 from classes.gameObj.button import Button
 from classes.gameObj.usernameInputUI import UsernameInputUI
+from classes.gameObj.HighScoreUI import HighScoreUI
 
 from utils import *
 
@@ -56,11 +57,13 @@ if __name__ == "__main__":
     }
     
     #define game variables
+    MAX_LEVEL = 8
+    START_LEVEL = 8
+    
     tile_size = 50
     game_over = 0
     main_menu = True
-    level = 0
-    max_levels = 2
+    level = START_LEVEL
     score = 0
 
     #이미지 로드
@@ -81,9 +84,9 @@ if __name__ == "__main__":
 
 
     #create buttons
-    restart_button = Button(screen_width // 2 - 50, screen_height // 2 + 100, restart_img, screen)
-    start_button = Button(screen_width // 2 - 350, screen_height // 2, start_img, screen)
-    exit_button = Button(screen_width // 2 + 150, screen_height // 2, exit_img, screen)
+    restart_button = Button(screen_width // 2 - 50, screen_height // 2 + 100, restart_img, screen, pg.K_RETURN)
+    start_button = Button(screen_width // 2 - 350, screen_height // 2 - 200, start_img, screen, pg.K_RETURN)
+    exit_button = Button(screen_width // 2 + 150, screen_height // 2 - 200, exit_img, screen, pg.K_ESCAPE)
     
     # font and color
     font = pg.font.SysFont('Bauhaus 93', 70)
@@ -94,7 +97,8 @@ if __name__ == "__main__":
     # UI class
     input_active = False
     username_input_ui = UsernameInputUI(screen, font)
-
+    highscore_ui = 
+    
     player = Player(50,screen_height-65,screen)
     
     # clock
@@ -107,11 +111,13 @@ if __name__ == "__main__":
 
         screen.blit(bg_img, (0, 0))
         screen.blit(sun_img, (100, 100))
+        
+        events = pg.event.get()
 
         if main_menu == True:
-            if exit_button.draw():
+            if exit_button.draw(events):
                 run = False
-            if start_button.draw():
+            if start_button.draw(events):
                 main_menu = False
         else:
             world.draw()
@@ -136,7 +142,7 @@ if __name__ == "__main__":
 
             # if player has died
             if game_over == -1:
-                if restart_button.draw():
+                if restart_button.draw(events):
                     world_data = []
                     world = reset_level(level,player,blob_group,lava_group,exit_group, platform_group, coin_group, tile_size, screen)
                     game_over = 0
@@ -146,7 +152,7 @@ if __name__ == "__main__":
             if game_over == 1:
                 # reset game and go to next level
                 level += 1
-                if level <= max_levels:
+                if level <= MAX_LEVEL:
                     # reset level
                     world_data = []
                     world = reset_level(level,player,blob_group,lava_group,exit_group, platform_group, coin_group, tile_size, screen)
@@ -157,15 +163,19 @@ if __name__ == "__main__":
                     final_score = score_manager.calculate_score(level, score)
                     input_active = True
                     
-                    if restart_button.draw():
-                        level = 1
+                    if restart_button.draw(events):
+                        # save score
+                        score_manager.save_score(username_input_ui.get_input(), score)
+                        input_active = False
+                        
                         # reset level
+                        level = START_LEVEL
                         world_data = []
                         world = reset_level(level,player,blob_group,lava_group,exit_group, platform_group, coin_group, tile_size, screen)
                         game_over = 0
                         score = 0
+                        main_menu = True 
 
-        events = pg.event.get()
         for event in events:
             if event.type == pg.QUIT:
                 run = False
