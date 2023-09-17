@@ -97,7 +97,7 @@ if __name__ == "__main__":
     # UI class
     input_active = False
     username_input_ui = UsernameInputUI(screen, font)
-    highscore_ui = 
+    highscore_ui = HighScoreUI(screen, font)
     
     player = Player(50,screen_height-65,screen)
     
@@ -119,6 +119,10 @@ if __name__ == "__main__":
                 run = False
             if start_button.draw(events):
                 main_menu = False
+                
+            scores = score_manager.load_high_scores()
+            highscore_ui.update_high_scores(scores)
+            highscore_ui.draw()
         else:
             world.draw()
 

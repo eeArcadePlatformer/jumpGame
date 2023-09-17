@@ -37,5 +37,6 @@ class ScoreManager():
             pickle.dump(self.scores, file)
 
     def load_high_scores(self):
-        self.scores = pickle.load(self.save_path) 
+        with open(self.save_path, 'rb') as file:
+            self.scores = pickle.load(file)
         return self.scores

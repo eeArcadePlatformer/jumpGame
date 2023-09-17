@@ -5,7 +5,7 @@ class HighScoreUI:
     def __init__(self, screen, font):
         self.screen = screen
         self.font = font
-        self.high_scores = self.load_high_scores()
+        self.high_scores = []
 
     # 화면에 상위 10개의 최고 점수를 표시.
     def draw(self):
@@ -23,5 +23,4 @@ class HighScoreUI:
 
     # 리스트를 새로운 상위 10개의 점수로 업데이트
     def update_high_scores(self, new_scores):
-        self.high_scores = new_scores[:10] # 새로운 상위 점수로 업데이트.
-        self.save_high_scores() # 점수를 파일에 저장
+        self.high_scores = new_scores[:10]
