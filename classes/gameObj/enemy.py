@@ -1,11 +1,12 @@
 import pygame as pg
 import random
 from pygame.locals import *
+from utils import resource_path
 
 class Enemy(pg.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
-        self.image = pg.image.load('img/blob.png') # 블롭
+        self.image = pg.image.load(resource_path('img/blob.png')) # 블롭
 	
         self.rect = self.image.get_rect()
         self.rect.x = x

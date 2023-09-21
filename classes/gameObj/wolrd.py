@@ -5,10 +5,11 @@ from classes.gameObj.lava import Lava
 from classes.gameObj.coin import Coin
 from classes.gameObj.ExitDoor import ExitDoor
 from classes.gameObj.platform import Platform
+from utils import resource_path
 class World():
     def __init__(self, screen, data, tile_size, groups):
-        dirt_img = pg.image.load('img/dirt.png') # 흙 (기본 이미지)
-        grass_img = pg.image.load('img/grass.png')
+        dirt_img = pg.image.load(resource_path('img/dirt.png')) # 흙 (기본 이미지)
+        grass_img = pg.image.load(resource_path('img/grass.png'))
 
         self.tile_list=[]
         
