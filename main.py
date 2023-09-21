@@ -1,6 +1,8 @@
 import pygame as pg
 from pygame.locals import *
 
+import time
+
 from classes.gameObj.wolrd import World
 from classes.gameObj.player import Player
 from classes.Managers.soundmanager import SoundManager
@@ -59,6 +61,8 @@ if __name__ == "__main__":
     #define game variables
     MAX_LEVEL = 0
     START_LEVEL = 0
+    
+    BONUS_LIMIT = 5*60e3
     
     tile_size = 50
     game_over = 0
@@ -119,6 +123,7 @@ if __name__ == "__main__":
                 run = False
             if start_button.draw(events):
                 main_menu = False
+                start_time = pg.time.get_ticks()
                 
             scores = score_manager.load_high_scores()
             highscore_ui.update_high_scores(scores)
@@ -162,10 +167,12 @@ if __name__ == "__main__":
                     world = reset_level(level,player,blob_group,lava_group,exit_group, platform_group, coin_group, tile_size, screen)
                     game_over = 0
                 else:
+                    end_time = pg.time.get_ticks()
+                    elapsed_time = (end_time - start_time) / 1000.0
                     draw_text(screen,'YOU WIN!', font, blue, (screen_width // 2) - 140, screen_height // 2 - 200)
                     draw_text(screen,'Write your name :', font, blue, (screen_width // 2) - 250, screen_height // 2 - 100)
                     # Save the score using ScoreManager
-                    final_score = score_manager.calculate_score(level, score)
+                    final_score = score_manager.calculate_score(level, score, BONUS_LIMIT - elapsed_time)
                     input_active = True
                     if len(username_input_ui.get_input()) >2:
                         if restart_button.draw(events):
