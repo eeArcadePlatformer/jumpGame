@@ -57,8 +57,8 @@ if __name__ == "__main__":
     }
     
     #define game variables
-    MAX_LEVEL = 8
-    START_LEVEL = 8
+    MAX_LEVEL = 0
+    START_LEVEL = 0
     
     tile_size = 50
     game_over = 0
@@ -96,8 +96,8 @@ if __name__ == "__main__":
     
     # UI class
     input_active = False
-    username_input_ui = UsernameInputUI(screen, font)
-    highscore_ui = HighScoreUI(screen, font)
+    username_input_ui = UsernameInputUI(screen, font, input_box_pos=((screen_width // 2)- 200, screen_height // 2 ), input_box_size=(400,70))
+    highscore_ui = HighScoreUI(screen, font_score, (screen.get_width()//2 , screen.get_height()//2),blue)
     
     player = Player(50,screen_height-65,screen)
     
@@ -162,23 +162,24 @@ if __name__ == "__main__":
                     world = reset_level(level,player,blob_group,lava_group,exit_group, platform_group, coin_group, tile_size, screen)
                     game_over = 0
                 else:
-                    draw_text(screen,'YOU WIN!', font, blue, (screen_width // 2) - 140, screen_height // 2)
+                    draw_text(screen,'YOU WIN!', font, blue, (screen_width // 2) - 140, screen_height // 2 - 200)
+                    draw_text(screen,'Write your name :', font, blue, (screen_width // 2) - 250, screen_height // 2 - 100)
                     # Save the score using ScoreManager
                     final_score = score_manager.calculate_score(level, score)
                     input_active = True
-                    
-                    if restart_button.draw(events):
-                        # save score
-                        score_manager.save_score(username_input_ui.get_input(), score)
-                        input_active = False
-                        
-                        # reset level
-                        level = START_LEVEL
-                        world_data = []
-                        world = reset_level(level,player,blob_group,lava_group,exit_group, platform_group, coin_group, tile_size, screen)
-                        game_over = 0
-                        score = 0
-                        main_menu = True 
+                    if len(username_input_ui.get_input()) >2:
+                        if restart_button.draw(events):
+                            # save score
+                            score_manager.save_score(username_input_ui.get_input(), score)
+                            input_active = False
+
+                            # reset level
+                            level = START_LEVEL
+                            world_data = []
+                            world = reset_level(level,player,blob_group,lava_group,exit_group, platform_group, coin_group, tile_size, screen)
+                            game_over = 0
+                            score = 0
+                            main_menu = True 
 
         for event in events:
             if event.type == pg.QUIT:

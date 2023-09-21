@@ -1,7 +1,7 @@
 import pygame
 
 class UsernameInputUI:
-    def __init__(self, screen, font, input_box_pos=(200, 300), input_box_size=(300, 40), border_color=(0, 0, 0), border_thickness=5, text_color=(0, 0, 0)):
+    def __init__(self, screen, font, input_box_pos=(200, 300), input_box_size=(300, 40), border_color=(255, 255, 255,0), border_thickness=5, text_color=(0, 0, 0)):
         self.screen = screen
         self.font = font
         self.input_string = ""
@@ -35,8 +35,8 @@ class UsernameInputUI:
                     # 백스페이스 키를 누르면 입력값에서 문자 하나 삭제
                     self.input_string = self.input_string[:-1]
                 else:
-                    # 다른 키 입력은 입력값에 추가
-                    self.input_string += event.unicode
+                    if len(self.input_string) < 10:
+                        self.input_string += event.unicode
 
 if __name__ == "__main__":
     pygame.init()
