@@ -1,5 +1,5 @@
 import pygame as pg
-from utils import draw_text
+from utils import draw_text, resource_path
 
 class Player():
     def __init__(self, x, y, screen):
@@ -131,13 +131,13 @@ class Player():
         self.counter = 0
         
         for num in range(1, 5):
-            img_right = pg.image.load(f'img/guy{num}.png')
+            img_right = pg.image.load(resource_path(f'img/guy{num}.png'))
             img_right = pg.transform.scale(img_right, (40, 80))
             img_left = pg.transform.flip(img_right, True, False)
             self.images_right.append(img_right)
             self.images_left.append(img_left)
         
-        self.dead_image = pg.image.load('img/ghost.png')
+        self.dead_image = pg.image.load(resource_path('img/ghost.png'))
         self.image = self.images_right[self.index]
         self.rect = self.image.get_rect()
         self.rect.x = x

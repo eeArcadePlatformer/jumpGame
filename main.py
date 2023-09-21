@@ -2,6 +2,7 @@ import pygame as pg
 from pygame.locals import *
 
 import time
+import sys
 
 from classes.gameObj.wolrd import World
 from classes.gameObj.player import Player
@@ -10,17 +11,49 @@ from classes.Managers.scoremanager import ScoreManager
 from classes.gameObj.button import Button
 from classes.gameObj.usernameInputUI import UsernameInputUI
 from classes.gameObj.HighScoreUI import HighScoreUI
+from classes.gameObj.coin import Coin
 
 from utils import *
+
+# 레벨 리셋 함수
+def reset_level(level, player, blob_group, lava_group, exit_group, platform_group, coin_group, tile_size, screen):
+    screen_width, screen_height = pg.display.get_surface().get_size()
+    player.reset(100, screen_height - 130, screen)
+    blob_group.empty()
+    platform_group.empty()
+    coin_group.empty()
+    lava_group.empty()
+    exit_group.empty()
+    # level read
+    if os.path.exists(resource_path(f'levels/level{level}_data')):
+        pickle_in = open(resource_path(f'levels/level{level}_data'), 'rb')
+        world_data = pickle.load(pickle_in)
+    else:
+        print('Level is Empty. plz check.')
+        sys.exit()
+        
+    sprite_groups = {
+        "blob_group" : blob_group,
+        "lava_group" : lava_group,
+        "coin_group" : coin_group,
+        "exit_group" : exit_group,
+        "platform_group" : platform_group
+    }
+    world = World(screen, world_data, tile_size, sprite_groups)
+
+    score_coin = Coin(tile_size // 2, tile_size // 2, tile_size)
+    coin_group.add(score_coin)
+
+    return world
 
 if __name__ == "__main__":
     pg.init()#pygame을 초기화
     
     sound_files = {
-        'music': 'sound/music.wav',
-        'coin': 'sound/coin.wav',
-        'jump': 'sound/jump.wav',
-        'game_over': 'sound/game_over.wav'
+        'music': resource_path('sound/music.wav'),
+        'coin': resource_path('sound/coin.wav'),
+        'jump': resource_path('sound/jump.wav'),
+        'game_over': resource_path('sound/game_over.wav')
     }
 
     # manager class
@@ -33,7 +66,7 @@ if __name__ == "__main__":
     sound_manager.sounds['game_over'].set_volume(0.5)
 
     # 배경 음악 재생
-    pg.mixer.music.load('sound/music.wav')
+    pg.mixer.music.load(resource_path('sound/music.wav'))
     pg.mixer.music.play(-1, 0.0, 5000)
 
     screen_width = 1000
@@ -59,7 +92,7 @@ if __name__ == "__main__":
     }
     
     #define game variables
-    MAX_LEVEL = 0
+    MAX_LEVEL = 7
     START_LEVEL = 0
     
     BONUS_LIMIT = 5*60
@@ -71,21 +104,20 @@ if __name__ == "__main__":
     score = 0
 
     #이미지 로드
-    sun_img = pg.image.load('img/sun.png')#태양 이미지
-    bg_img = pg.image.load('img/sky.png')#배경 이미지
-    restart_img = pg.image.load('img/restart_btn.png')
-    start_img = pg.image.load('img/start_btn.png')
-    exit_img = pg.image.load('img/exit_btn.png')
+    sun_img = pg.image.load(resource_path('img/sun.png'))#태양 이미지
+    bg_img = pg.image.load(resource_path('img/sky.png'))#배경 이미지
+    restart_img = pg.image.load(resource_path('img/restart_btn.png'))
+    start_img = pg.image.load(resource_path('img/start_btn.png'))
+    exit_img = pg.image.load(resource_path('img/exit_btn.png'))
     
     score_coin = Coin(tile_size // 2, tile_size // 2, tile_size)
     coin_group.add(score_coin)
 
     #load in level data and create world
-    if os.path.exists(f'levels/level{level}_data'):
-        pickle_in = open(f'levels/level{level}_data', 'rb')
+    if os.path.exists(resource_path(f'levels/level{level}_data')):
+        pickle_in = open(resource_path(f'levels/level{level}_data'), 'rb')
         world_data = pickle.load(pickle_in)
     world = World(screen,world_data,tile_size, sprite_groups)
-
 
     #create buttons
     restart_button = Button(screen_width // 2 - 50, screen_height // 2 + 100, restart_img, screen, pg.K_RETURN)
