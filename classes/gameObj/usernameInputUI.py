@@ -24,6 +24,9 @@ class UsernameInputUI:
 
     def get_input(self):
         return self.input_string
+    
+    def set_input(self, default = ""):
+        self.input_string = default
 
     def handle_events(self, events):
         for event in events:
