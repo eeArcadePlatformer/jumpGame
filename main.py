@@ -62,7 +62,7 @@ if __name__ == "__main__":
     MAX_LEVEL = 0
     START_LEVEL = 0
     
-    BONUS_LIMIT = 5*60e3
+    BONUS_LIMIT = 5*60
     
     tile_size = 50
     game_over = 0
@@ -101,7 +101,7 @@ if __name__ == "__main__":
     # UI class
     input_active = False
     username_input_ui = UsernameInputUI(screen, font, input_box_pos=((screen_width // 2)- 200, screen_height // 2 ), input_box_size=(400,70))
-    highscore_ui = HighScoreUI(screen, font_score, (screen.get_width()//2 , screen.get_height()//2),blue)
+    highscore_ui = HighScoreUI(screen, font_score, (screen.get_width()//2 , screen.get_height()//2),(0,0,0))
     
     player = Player(50,screen_height-65,screen)
     
@@ -139,7 +139,10 @@ if __name__ == "__main__":
                 if pg.sprite.spritecollide(player, coin_group, True):
                     score += 1
                     sound_manager.play('coin')
-                draw_text(screen,'X ' + str(score), font_score, white, tile_size - 10, 10)
+                end_time = pg.time.get_ticks()
+                elapsed_time = (end_time - start_time) / 1000.0
+            draw_text(screen,'X ' + str(score), font_score, (0,0,0), tile_size - 10, 10)
+            draw_text(screen,'time(s)' + str(int(BONUS_LIMIT-elapsed_time)), font_score, (0,0,0), tile_size*3 - 10, 10)
 
             blob_group.draw(screen)
             platform_group.draw(screen)
@@ -171,15 +174,16 @@ if __name__ == "__main__":
                     elapsed_time = (end_time - start_time) / 1000.0
                     draw_text(screen,'YOU WIN!', font, blue, (screen_width // 2) - 140, screen_height // 2 - 200)
                     draw_text(screen,'Write your name :', font, blue, (screen_width // 2) - 250, screen_height // 2 - 100)
-                    # Save the score using ScoreManager
+                    # 점수 계산
                     final_score = score_manager.calculate_score(level, score, BONUS_LIMIT - elapsed_time)
                     input_active = True
-                    if len(username_input_ui.get_input()) >2:
+                    
+                    if len(username_input_ui.get_input()) > 2:
                         if restart_button.draw(events):
                             # save score
-                            score_manager.save_score(username_input_ui.get_input(), score)
+                            score_manager.save_score(username_input_ui.get_input(), final_score)
                             input_active = False
-
+                            username_input_ui.set_input()
                             # reset level
                             level = START_LEVEL
                             world_data = []

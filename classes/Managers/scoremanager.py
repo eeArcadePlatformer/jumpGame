@@ -21,8 +21,8 @@ class ScoreManager():
             with open(self.save_path, 'rb') as file:
                 self.scores = pickle.load(file)
         
-    def calculate_score(self,level, coins_collected):
-        return level * 10 + coins_collected
+    def calculate_score(self,level, coins_collected, time_left):
+        return level * 10 + coins_collected + int(time_left)*100
     
     def save_score(self, username, score):
         with open(self.save_path, 'rb') as file:
