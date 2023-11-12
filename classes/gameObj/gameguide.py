@@ -2,7 +2,6 @@ import pygame as pg
 from pygame.locals import *
 import sys
 
-from main import *
 from utils import *
 
 class GameIntro:
@@ -29,9 +28,6 @@ class GameIntro:
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_RETURN:
                         intro = False
-
-            # 이미지를 화면에 표시
-            screen.blit(bg_img, (0, 0))
 
             # 텍스트를 화면에 표시
             y = 400

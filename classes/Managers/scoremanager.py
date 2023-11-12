@@ -3,14 +3,10 @@ import pickle
 import os
 
 class ScoreManager():
-    def __init__(self):
+    def __init__(self, directory_path):
         self.scores = None
         
-        appdata_local_path = os.path.join(os.environ['LOCALAPPDATA'])
-        new_dirPath = os.path.join(appdata_local_path, 'platform_game_ee')
-        os.makedirs(new_dirPath, exist_ok=True)
-        
-        self.save_path = os.path.join(new_dirPath, 'save_data.pkl')
+        self.save_path = os.path.join(directory_path, 'save_data.pkl')
 
         # 파일 존재 여부
         if not os.path.isfile(self.save_path):
