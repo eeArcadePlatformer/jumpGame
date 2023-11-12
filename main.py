@@ -3,6 +3,7 @@ from pygame.locals import *
 
 import time
 import sys
+import traceback
 
 from classes.gameObj.wolrd import World
 from classes.gameObj.player import Player
@@ -12,9 +13,18 @@ from classes.gameObj.button import Button
 from classes.gameObj.usernameInputUI import UsernameInputUI
 from classes.gameObj.HighScoreUI import HighScoreUI
 from classes.gameObj.coin import Coin
+from classes.module.loggingSystem import Logger
 # from classes.gameObj.gameguide import GameIntro
 
 from utils import *
+
+# error logging
+def handle_exception(exc_type, exc_value, exc_traceback):
+    logger = Logger.getInstance()  # Logger 인스턴스 동적으로 가져오기
+    error_msg = "".join(traceback.format_exception(exc_type, exc_value, exc_traceback)) # error to string
+    logger.logError(error_msg)
+    
+sys.excepthook = handle_exception
 
 # 레벨 리셋 함수
 def reset_level(level, player, blob_group, lava_group, exit_group, platform_group, coin_group, tile_size, screen):
@@ -48,7 +58,17 @@ def reset_level(level, player, blob_group, lava_group, exit_group, platform_grou
     return world
 
 if __name__ == "__main__":
+    # save and log file path
+    appdata_local_path = os.path.join(os.environ['LOCALAPPDATA'])
+    game_dirPath = os.path.join(appdata_local_path, 'platform_game_ee')
+    os.makedirs(game_dirPath, exist_ok=True)
+    
+    logger = Logger(game_dirPath)
+    score_manager = ScoreManager(game_dirPath)
+    logger.logGeneral("Score manager initialized")
+
     pg.init() # pygame을 초기화
+    logger.logGeneral("Pygame initialized")
     
     sound_files = {
         'music': resource_path('sound/music.wav'),
@@ -59,7 +79,7 @@ if __name__ == "__main__":
 
     # manager class
     sound_manager = SoundManager(sound_files)
-    score_manager = ScoreManager()
+    logger.logGeneral("Sound manager initialized (sound resource loaded.)")
 
     # 사운드 설정
     sound_manager.sounds['coin'].set_volume(0.5)
@@ -69,6 +89,7 @@ if __name__ == "__main__":
     # 배경 음악 재생
     pg.mixer.music.load(resource_path('sound/music.wav'))
     pg.mixer.music.play(-1, 0.0, 5000)
+    logger.logGeneral("Play background music.")
 
     screen_width = 1000
     screen_height = 1000
@@ -76,6 +97,7 @@ if __name__ == "__main__":
     #스크린을 생성하고, 타이틀을 'Platformer'로 지정
     screen = pg.display.set_mode((screen_width, screen_height))
     pg.display.set_caption('Platformer')
+    logger.logGeneral("Screen and game window initialized")
     
     # 오브젝트별 스프라이트 그룹
     blob_group = pg.sprite.Group()
@@ -118,6 +140,10 @@ if __name__ == "__main__":
     if os.path.exists(resource_path(f'levels/level{level}_data')):
         pickle_in = open(resource_path(f'levels/level{level}_data'), 'rb')
         world_data = pickle.load(pickle_in)
+        logger.logGeneral(f"Load level{level}_data.")
+    else:
+        logger.logError(f"Level {level} data file not found")
+        sys.exit()
     world = World(screen,world_data,tile_size, sprite_groups)
 
     #create buttons
@@ -189,6 +215,7 @@ if __name__ == "__main__":
 
             # if player has died
             if game_over == -1:
+                logger.logGeneral("Player died, restarting level")
                 end_time = pg.time.get_ticks()
                 elapsed_time = (end_time - start_time) / 1000.0 if (end_time - start_time) / 1000.0 > 0 else 0
                 draw_text(screen,'time(s)' + str(int(BONUS_LIMIT-elapsed_time)), font_score, (0,0,0), tile_size*3 - 10, 10)
@@ -200,6 +227,7 @@ if __name__ == "__main__":
 
             # if player has completed the level
             if game_over == 1:
+                logger.logGeneral(f"Player completed level {level}")
                 # reset game and go to next level
                 level += 1
                 if level <= MAX_LEVEL:
@@ -208,19 +236,21 @@ if __name__ == "__main__":
                     world = reset_level(level,player,blob_group,lava_group,exit_group, platform_group, coin_group, tile_size, screen)
                     game_over = 0
                 else:
+                    logger.logGeneral(f"Player game completed")
                     # end_time = pg.time.get_ticks()
                     # elapsed_time = (end_time - start_time) / 1000.0
                     draw_text(screen,'YOU WIN!', font, blue, (screen_width // 2) - 140, screen_height // 2 - 200)
                     draw_text(screen,'Write your name :', font, blue, (screen_width // 2) - 250, screen_height // 2 - 100)
+                    draw_text(screen,'time(s)' + str(int(BONUS_LIMIT-elapsed_time)), font_score, (0,0,0), tile_size*3 - 10, 10)
                     # 점수 계산
                     final_score = score_manager.calculate_score(level, score, BONUS_LIMIT - elapsed_time)
                     input_active = True
-                    draw_text(screen,'time(s)' + str(int(BONUS_LIMIT-elapsed_time)), font_score, (0,0,0), tile_size*3 - 10, 10)
                     
                     if len(username_input_ui.get_input()) > 2:
                         if restart_button.draw(events):
                             # save score
                             score_manager.save_score(username_input_ui.get_input(), final_score)
+                            logger.logGeneral(f"Score saved.")
                             input_active = False
                             username_input_ui.set_input()
                             # reset level
@@ -236,6 +266,7 @@ if __name__ == "__main__":
 
         for event in events:
             if event.type == pg.QUIT:
+                logger.logGeneral("Game closed by user")
                 run = False
                 
         if input_active:
