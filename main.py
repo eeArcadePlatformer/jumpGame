@@ -12,6 +12,7 @@ from classes.gameObj.button import Button
 from classes.gameObj.usernameInputUI import UsernameInputUI
 from classes.gameObj.HighScoreUI import HighScoreUI
 from classes.gameObj.coin import Coin
+# from classes.gameObj.gameguide import GameIntro
 
 from utils import *
 
@@ -47,7 +48,7 @@ def reset_level(level, player, blob_group, lava_group, exit_group, platform_grou
     return world
 
 if __name__ == "__main__":
-    pg.init()#pygame을 초기화
+    pg.init() # pygame을 초기화
     
     sound_files = {
         'music': resource_path('sound/music.wav'),
@@ -134,6 +135,8 @@ if __name__ == "__main__":
     input_active = False
     username_input_ui = UsernameInputUI(screen, font, input_box_pos=((screen_width // 2)- 200, screen_height // 2 ), input_box_size=(400,70))
     highscore_ui = HighScoreUI(screen, font_score, (screen.get_width()//2 , screen.get_height()//2),(0,0,0))
+    
+    # game_guide = GameIntro(screen)
     
     player = Player(50,screen_height-65,screen)
     
@@ -227,7 +230,6 @@ if __name__ == "__main__":
                             game_over = 0
                             score = 0
                             main_menu = True 
-                    
                     
             draw_text(screen,'X ' + str(score), font_score, (0,0,0), tile_size - 10, 10)
             draw_text(screen,'time(s)' + str(int(BONUS_LIMIT-elapsed_time)), font_score, (0,0,0), tile_size*3 - 10, 10)
