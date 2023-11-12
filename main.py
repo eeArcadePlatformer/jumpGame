@@ -92,7 +92,7 @@ if __name__ == "__main__":
     }
     
     #define game variables
-    MAX_LEVEL = 7
+    MAX_LEVEL = 6
     START_LEVEL = 0
     
     BONUS_LIMIT = 5*60
@@ -159,6 +159,7 @@ if __name__ == "__main__":
                 
             scores = score_manager.load_high_scores()
             highscore_ui.update_high_scores(scores)
+            highscore_ui.update()
             highscore_ui.draw()
         else:
             world.draw()
@@ -172,9 +173,8 @@ if __name__ == "__main__":
                     score += 1
                     sound_manager.play('coin')
                 end_time = pg.time.get_ticks()
-                elapsed_time = (end_time - start_time) / 1000.0
-            draw_text(screen,'X ' + str(score), font_score, (0,0,0), tile_size - 10, 10)
-            draw_text(screen,'time(s)' + str(int(BONUS_LIMIT-elapsed_time)), font_score, (0,0,0), tile_size*3 - 10, 10)
+                elapsed_time = (end_time - start_time) / 1000.0 if (end_time - start_time) / 1000.0 > 0 else 0
+                draw_text(screen,'time(s)' + str(int(BONUS_LIMIT-elapsed_time)), font_score, (0,0,0), tile_size*3 - 10, 10)
 
             blob_group.draw(screen)
             platform_group.draw(screen)
@@ -186,6 +186,9 @@ if __name__ == "__main__":
 
             # if player has died
             if game_over == -1:
+                end_time = pg.time.get_ticks()
+                elapsed_time = (end_time - start_time) / 1000.0 if (end_time - start_time) / 1000.0 > 0 else 0
+                draw_text(screen,'time(s)' + str(int(BONUS_LIMIT-elapsed_time)), font_score, (0,0,0), tile_size*3 - 10, 10)
                 if restart_button.draw(events):
                     world_data = []
                     world = reset_level(level,player,blob_group,lava_group,exit_group, platform_group, coin_group, tile_size, screen)
@@ -202,13 +205,14 @@ if __name__ == "__main__":
                     world = reset_level(level,player,blob_group,lava_group,exit_group, platform_group, coin_group, tile_size, screen)
                     game_over = 0
                 else:
-                    end_time = pg.time.get_ticks()
-                    elapsed_time = (end_time - start_time) / 1000.0
+                    # end_time = pg.time.get_ticks()
+                    # elapsed_time = (end_time - start_time) / 1000.0
                     draw_text(screen,'YOU WIN!', font, blue, (screen_width // 2) - 140, screen_height // 2 - 200)
                     draw_text(screen,'Write your name :', font, blue, (screen_width // 2) - 250, screen_height // 2 - 100)
                     # 점수 계산
                     final_score = score_manager.calculate_score(level, score, BONUS_LIMIT - elapsed_time)
                     input_active = True
+                    draw_text(screen,'time(s)' + str(int(BONUS_LIMIT-elapsed_time)), font_score, (0,0,0), tile_size*3 - 10, 10)
                     
                     if len(username_input_ui.get_input()) > 2:
                         if restart_button.draw(events):
@@ -223,6 +227,10 @@ if __name__ == "__main__":
                             game_over = 0
                             score = 0
                             main_menu = True 
+                    
+                    
+            draw_text(screen,'X ' + str(score), font_score, (0,0,0), tile_size - 10, 10)
+            draw_text(screen,'time(s)' + str(int(BONUS_LIMIT-elapsed_time)), font_score, (0,0,0), tile_size*3 - 10, 10)
 
         for event in events:
             if event.type == pg.QUIT:
