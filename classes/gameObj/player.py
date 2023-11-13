@@ -108,6 +108,12 @@ class Player():
                     #move sideways with the platform
                     if platform.move_x != 0:
                         self.rect.x += platform.move_direction
+                        
+                    if self.rect.bottom > platform.rect.top and not self.in_air:
+                        self.rect.bottom = platform.rect.top
+                        dy = 0
+                        self.vel_y = 0 
+
             self.rect.x += dx
             self.rect.y += dy
 

@@ -192,6 +192,7 @@ if __name__ == "__main__":
             highscore_ui.draw()
         else:
             world.draw()
+            logger.logGeneral(f"x : {player.rect.x}, y : {player.rect.y}")
 
             if game_over == 0:
                 blob_group.update()
